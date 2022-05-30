@@ -1,17 +1,18 @@
 <template>
     <div>
-
-        <NuxtLink to="/" class="nav-link" exact>{{ loggedInUser.user.email }}</NuxtLink>
-        <NuxtLink to="/logout" class="nav-link" exact>Deconnexion</NuxtLink>
+        <Navbar />
     </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import Navbar from '../components/Navbar.vue'
 
 export default {
+    middleware: "auth",
     computed: {
-        ...mapGetters(['isAuthenticated', 'loggedInUser'])
+        ...mapGetters(["isAuthenticated", "loggedInUser"])
     },
+    components: { Navbar }
 }
 </script>

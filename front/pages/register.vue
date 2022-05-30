@@ -166,6 +166,7 @@
 import AlertNotif from "../components/AlertNotif.vue";
 
 export default {
+  middleware: 'guest',
   components: {
     AlertNotif
   },

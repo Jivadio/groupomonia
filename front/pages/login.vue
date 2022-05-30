@@ -136,6 +136,7 @@
 <script>
 import AlertNotif from '../components/AlertNotif.vue';
 export default {
+  middleware: 'guest',
   components: { AlertNotif },
   data() {
     return {
@@ -144,9 +145,8 @@ export default {
       password: ''
     }
   },
-
   methods: {
-    async login(){
+    async login() {
       try {
         await this.$auth.loginWith('local', {
           data: {

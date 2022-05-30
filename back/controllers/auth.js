@@ -69,7 +69,7 @@ exports.getUser = (req, res, next) => {
         user: {
           id: loadedUser._id,
           email: loadedUser.email,
-          instagramUsername: loadedUser.instagramUsername,
+          pseudo: loadedUser.pseudo,
         },
       });
 }
