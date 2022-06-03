@@ -34,26 +34,33 @@ exports.login = (req, res, next) => {
     }).then(user => {
       if (!user) {
         return res.status(401).json({
-          error: "L'utilisateur n'existe pas"
+          message: "L'utilisateur n'existe pas"
         });
       }
 
       bcrypt.compare(req.body.password, user.password).then(valid => {
         if (!valid) {
           return res.status(401).json({
-            error: "Mot de passe incorrect"
+            message: "Mot de passe incorrect"
           });
         }
+
         loadedUser = user;
+
+        const token = jwt.sign({
+            userId: user.id,
+            username: user.pseudo,
+          },
+          'RANDOM_TOKEN_SECRET', {
+            expiresIn: '24h'
+          }
+        )
+
+        console.log(token);
+
         res.status(200).json({
           userId: user.id,
-          token: jwt.sign({
-              userId: user.id
-            },
-            'RANDOM_TOKEN_SECRET', {
-              expiresIn: '24h'
-            }
-          )
+          token: token
         });
       });
     })
@@ -65,11 +72,11 @@ exports.login = (req, res, next) => {
 }
 
 exports.getUser = (req, res, next) => {
-    res.status(200).json({
-        user: {
-          id: loadedUser._id,
-          email: loadedUser.email,
-          pseudo: loadedUser.pseudo,
-        },
-      });
+  res.status(200).json({
+    user: {
+      id: loadedUser._id,
+      email: loadedUser.email,
+      pseudo: loadedUser.pseudo,
+    },
+  });
 }

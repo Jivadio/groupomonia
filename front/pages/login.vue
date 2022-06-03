@@ -142,7 +142,7 @@ export default {
     return {
       error: null,
       pseudo: '',
-      password: ''
+      password: '',
     }
   },
   methods: {
@@ -151,10 +151,12 @@ export default {
         await this.$auth.loginWith('local', {
           data: {
             pseudo: this.pseudo,
-            password: this.password
+            password: this.password,
           }
         })
-        this.$router.push('/')
+        .then(response => {
+          this.$router.push('/');
+        })
       } catch (error) {
         this.error = error.response.data.message
       }

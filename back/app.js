@@ -3,8 +3,12 @@ const app = express();
 
 const cors = require('cors');
 const { connecting } = require('./MySQL/mysql');
+const bodyParser = require('body-parser');
+
+const path = require('path');
 
 const userRoutes = require('./routes/auth');
+const userPost = require('./routes/post');
 
 require('dotenv').config();
 
@@ -20,6 +24,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(bodyParser.json({limit: '50mb'}));
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 app.use(cors({
   credentials: true,
   origin: 'http://localhost:3000'
@@ -32,5 +40,7 @@ app.use(express.urlencoded({
 }));
 
 app.use('/api/auth', userRoutes);
+app.use('/api/post', userPost);
+
 
 module.exports = app;
