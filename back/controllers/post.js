@@ -191,7 +191,7 @@ exports.getLike = (req, res, next) => {
 
 exports.deletePost = (req, res, next) => {
   const postId = req.body.postId;
-  const imgLink = '';
+  let imgLink = '';
 
   postModel.findOne({
       where: {
@@ -199,7 +199,9 @@ exports.deletePost = (req, res, next) => {
       }
     })
     .then(post => {
-      imgLink = post.image.split('/images/')[1];
+      if (post.image) {
+        imgLink = post.image.split('/images/')[1];
+      }
       postModel.destroy({
           where: {
             id: postId
@@ -221,11 +223,13 @@ exports.deletePost = (req, res, next) => {
                   res.status(201).json({
                     message: 'Post supprimé !',
                   });
-                  fileSystem.unlink('./images/' + imgLink, (err) => {
-                    if (err) {
-                      console.log(err);
-                    }
-                  });
+                  if (imgLink) {
+                    fileSystem.unlink('./images/' + imgLink, (err) => {
+                      if (err) {
+                        console.log(err);
+                      }
+                    });
+                  }
                 })
                 .catch(error => {
                   res.status(500).json({
