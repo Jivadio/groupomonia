@@ -3,6 +3,7 @@ const app = express();
 
 const cors = require('cors');
 const { connecting } = require('./MySQL/mysql');
+const { loadModel } = require('./models/Model');
 const bodyParser = require('body-parser');
 
 const path = require('path');
@@ -13,6 +14,7 @@ const userPost = require('./routes/post');
 require('dotenv').config();
 
 connecting();
+loadModel();
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,7 +23,7 @@ app.use((req, res, next) => {
     'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'
   );
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  next();
+  next(); 
 });
 
 app.use(bodyParser.json({limit: '50mb'}));

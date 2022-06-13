@@ -29,7 +29,7 @@
                                     loggedInUser.user.pseudo
                             }}</NuxtLink>
                     </li>
-                    <li><a to="/" class="cta bg-red-500 hover:bg-red-600 px-3 py-2 rounded text-white font-semibold"
+                    <li><a class="cursor-pointer cta bg-red-500 hover:bg-red-600 px-3 py-2 rounded text-white font-semibold"
                             @click="logout">Déconnexion</a></li>
                 </ul>
             </div>

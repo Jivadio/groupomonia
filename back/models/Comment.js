@@ -5,24 +5,22 @@ const {
   DataTypes
 } = require('sequelize');
 
-const User = mysql.define('user', {
+const Comment = mysql.define('comment', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  pseudo: {
+  content: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: false
   },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+  createBy: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
-  password: {
-    type: DataTypes.STRING,
+  postId: {
+    type: DataTypes.INTEGER,
     allowNull: false
   },
   createdAt: {
@@ -35,4 +33,4 @@ const User = mysql.define('user', {
   }
 });
 
-module.exports = User;
+module.exports = Comment;

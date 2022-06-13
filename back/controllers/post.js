@@ -1,11 +1,14 @@
-const postModel = require('../models/post');
-const userModel = require('../models/user');
+const {
+  postModel,
+  commentModel
+} = require('../models/Model');
 const fs = require('fs');
 const base64Img = require('base64-img');
 const jwt = require('jsonwebtoken');
 
 exports.getAllPost = (req, res, next) => {
   postModel.findAll({
+      include: commentModel,
       order: [
         ['id', 'DESC'],
       ],
@@ -14,10 +17,7 @@ exports.getAllPost = (req, res, next) => {
       res.status(200).json(posts);
     })
     .catch(error => {
-      res.status(500).json({
-        message: "Erreur lors de la récupération des posts",
-        error: error
-      });
+      console.log(error);
     });
 }
 
@@ -71,4 +71,48 @@ exports.createPost = (req, res, next) => {
         });
     });
   }
+}
+
+exports.getComments = (req, res, next) => {
+  const postId = req.body.postId;
+  commentModel.findAll({
+      where: {
+        postId: postId
+      },
+      order: [
+        ['id', 'DESC'],
+      ],
+    })
+    .then(comments => {
+      res.status(200).json(comments);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+}
+
+exports.createComment = (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+  const pseudo = decodedToken.username;
+
+  const postId = req.body.postId;
+  const content = req.body.content; 
+
+  const comment = commentModel.create({
+      content: content,
+      createBy: pseudo,
+      postId: postId, 
+    })
+    .then(() => {
+      res.status(201).json({
+        message: 'Commentaire créé !',
+      });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Erreur lors de la création du commentaire",
+        error: error
+      });
+    });
 }

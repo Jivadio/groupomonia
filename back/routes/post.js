@@ -6,6 +6,8 @@ const multer = require('../middlewares/multer-config');
 
 router.get('/', auth, postController.getAllPost);
 router.post('/', auth, multer ,postController.createPost);
+router.post('/comment', auth ,postController.getComments);
+router.post('/sendcomment', auth ,postController.createComment);
 
 
 module.exports = router;

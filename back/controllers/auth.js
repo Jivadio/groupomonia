@@ -16,7 +16,7 @@ exports.register = (req, res, next) => {
           message: 'Utilisateur créé !'
         });
 
-        loadedUser = user;
+        loadedUser = user; 
       })
       .catch(error => {
         res.status(500).json({
@@ -55,9 +55,7 @@ exports.login = (req, res, next) => {
             expiresIn: '24h'
           }
         )
-
-        console.log(token);
-
+        
         res.status(200).json({
           userId: user.id,
           token: token

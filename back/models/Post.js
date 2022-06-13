@@ -33,6 +33,4 @@ const Post = mysql.define('post', {
     }
 });
 
-Post.sync(); 
-
 module.exports = Post;
