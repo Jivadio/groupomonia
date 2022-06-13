@@ -4,7 +4,7 @@
             class="width-90 mb-10 m-auto p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 text-center">
             <img class="width-30 m-auto" :src="post.image">
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ post.content }}</p>
-            <p class="mt-3 font-normal text-xs text-gray-300 dark:text-gray-300">Posté le: {{ new
+            <p class="mt-3 font-normal text-xs text-gray-300 dark:text-gray-300">{{ loggedInUser }} le: {{ new
                     Date(post.createdAt).toLocaleString()
             }}</p>
             <p class="font-normal text-xs text-gray-300 dark:text-gray-300">Par:
@@ -12,7 +12,10 @@
             <div class="react_icon">
                 <div :number_comment="number_comment" class="icon_comment cursor-pointer" v-on:click="showModal">
                 </div>
-                <div number_like="1" class="icon_like">
+                <div :number_like="number_like" class="icon_like cursor-pointer" v-on:click="sendLike"
+                    v-if="this.alreadyLike === false">
+                </div>
+                <div :number_like="number_like" class="icon_like cursor-pointer" v-on:click="deleteLike" v-else>
                 </div>
             </div>
         </div>
@@ -101,6 +104,7 @@
 </style>
 
 <script>
+import { mapGetters } from 'vuex'
 import CommentCard from '../components/CommentCard.vue'
 export default {
     data() {
@@ -108,8 +112,9 @@ export default {
             commentModal: false,
             textArea: '',
             comments: [],
-            number_comment: '',
-            number_like: ''
+            number_comment: '0',
+            number_like: '0',
+            alreadyLike: false,
         }
     },
     components: {
@@ -118,6 +123,9 @@ export default {
     mounted() {
         this.fetchComment();
     },
+    computed: {
+        ...mapGetters(['loggedInUser'])
+    },
     methods: {
         async closeModal() {
             this.commentModal = false;
@@ -125,6 +133,35 @@ export default {
 
         async showModal() {
             this.commentModal = true;
+        },
+
+        async sendLike() {
+            try {
+                await this.$axios.post('post/sendlike', {
+                    postId: this.post.id,
+                    type: 1,
+                });
+
+                this.alreadyLike = true;
+                this.fetchComment();
+            } catch (e) {
+                console.log(e)
+            }
+        },
+
+        async deleteLike() {
+            try {
+                await this.$axios.post('post/sendlike', {
+                    postId: this.post.id,
+                    type: 0,
+                });
+
+                this.alreadyLike = false;
+                this.fetchComment();
+            }
+            catch (e) {
+                console.log(e)
+            }
         },
 
         async sendComment() {
@@ -147,8 +184,21 @@ export default {
                     postId: this.post.id,
                 });
 
+                const like = await this.$axios.post('post/like', {
+                    postId: this.post.id,
+                });
+
                 this.comments = response.data;
                 this.number_comment = response.data.length;
+                this.number_like = like.data.length;
+
+                let apiData = like.data;
+                apiData.forEach(element => {
+                    if (element.userId == this.loggedInUser.user.pseudo) {
+                        this.alreadyLike = true;
+                    }
+                });
+
             } catch (e) {
                 console.log(e)
             }

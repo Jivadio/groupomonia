@@ -55,7 +55,6 @@ export default {
             try {
                 const response = await this.$axios.get('post');
                 this.post = response.data;
-                console.log(response.data);
             } catch (e) {
                 console.log(e)
             }

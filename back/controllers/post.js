@@ -1,6 +1,7 @@
 const {
   postModel,
-  commentModel
+  commentModel,
+  likeModel
 } = require('../models/Model');
 const fs = require('fs');
 const base64Img = require('base64-img');
@@ -8,7 +9,7 @@ const jwt = require('jsonwebtoken');
 
 exports.getAllPost = (req, res, next) => {
   postModel.findAll({
-      include: commentModel,
+      include: [commentModel, likeModel],
       order: [
         ['id', 'DESC'],
       ],
@@ -97,12 +98,12 @@ exports.createComment = (req, res, next) => {
   const pseudo = decodedToken.username;
 
   const postId = req.body.postId;
-  const content = req.body.content; 
+  const content = req.body.content;
 
   const comment = commentModel.create({
       content: content,
       createBy: pseudo,
-      postId: postId, 
+      postId: postId,
     })
     .then(() => {
       res.status(201).json({
@@ -114,5 +115,75 @@ exports.createComment = (req, res, next) => {
         message: "Erreur lors de la création du commentaire",
         error: error
       });
+    });
+}
+
+exports.createLike = (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+  const pseudo = decodedToken.username;
+
+  const postId = req.body.postId;
+  const typeLike = req.body.type;
+
+  switch (typeLike) {
+    case 1:
+      const like = likeModel.create({
+          userId: pseudo,
+          postId: postId,
+        })
+        .then(() => {
+          res.status(201).json({
+            message: 'Like créé !',
+          });
+        })
+        .catch(error => {
+          res.status(500).json({
+            message: "Erreur lors de la création du like",
+            error: error
+          });
+        });
+      break;
+
+    case 0:
+      likeModel.destroy({
+          where: {
+            userId: pseudo,
+            postId: postId,
+          }
+        })
+        .then(() => {
+          res.status(201).json({
+            message: 'Like supprimé !',
+          });
+        })
+        .catch(error => {
+          res.status(500).json({
+            message: "Erreur lors de la suppression du like",
+            error: error
+          });
+        });
+      break;
+      
+    default:
+      break;
+  }
+}
+
+exports.getLike = (req, res, next) => {
+  const postId = req.body.postId;
+  likeModel.findAll({
+      where: {
+        postId: postId
+      },
+      order: [
+        ['id', 'DESC'],
+      ],
+    })
+    .then(like => {
+      res.status(200).json(like);
+    })
+    .catch(error => {
+      console.log(error);
     });
 }
