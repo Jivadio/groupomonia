@@ -10,6 +10,7 @@ router.post('/comment', auth ,postController.getComments);
 router.post('/sendcomment', auth ,postController.createComment);
 router.post('/sendlike', auth ,postController.createLike);
 router.post('/like', auth ,postController.getLike);
+router.post('/delete', auth ,postController.deletePost);
 
 
 module.exports = router;

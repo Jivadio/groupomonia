@@ -88,6 +88,9 @@ export default {
             reader.readAsDataURL(selectedImage);
         },
     },
+    created() {
+        this.$nuxt.$on('deletingPost', ($event) => this.fetchPosts());
+    },
     computed: {
         ...mapGetters(["isAuthenticated", "loggedInUser"])
     },

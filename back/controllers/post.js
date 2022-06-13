@@ -164,7 +164,7 @@ exports.createLike = (req, res, next) => {
           });
         });
       break;
-      
+
     default:
       break;
   }
@@ -185,5 +185,51 @@ exports.getLike = (req, res, next) => {
     })
     .catch(error => {
       console.log(error);
+    });
+}
+
+exports.deletePost = (req, res, next) => {
+  const postId = req.body.postId;
+  postModel.destroy({
+      where: {
+        id: postId
+      }
+    })
+    .then(() => {
+      commentModel.destroy({
+          where: {
+            postId: postId
+          }
+        })
+        .then(() => {
+          likeModel.destroy({
+              where: {
+                postId: postId
+              }
+            })
+            .then(() => {
+              res.status(201).json({
+                message: 'Post supprimé !',
+              });
+            })
+            .catch(error => {
+              res.status(500).json({
+                message: "Erreur lors de la suppression du post",
+                error: error
+              });
+            });
+        })
+        .catch(error => {
+          res.status(500).json({
+            message: "Erreur lors de la suppression du post",
+            error: error
+          });
+        });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Erreur lors de la suppression du post",
+        error: error
+      });
     });
 }
