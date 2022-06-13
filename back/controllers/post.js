@@ -259,3 +259,55 @@ exports.deletePost = (req, res, next) => {
       });
     });
 }
+
+exports.editPost = (req, res, next) => {
+  const postId = req.body.postId;
+  const content = req.body.content;
+  const image = req.body.image;
+
+  if (image) {
+    const pathArr = image.split('/');
+    const fileName = pathArr[pathArr.length - 1];
+    const url = 'http://localhost:3001/images/' + fileName;
+
+    postModel.update({
+        content: content,
+        image: url
+      }, {
+        where: {
+          id: postId
+        }
+      })
+      .then(() => {
+        res.status(201).json({
+          message: 'Post modifié !',
+          url: url
+        });
+      })
+      .catch(error => {
+        res.status(500).json({
+          message: "Erreur lors de la modification du post",
+          error: error
+        });
+      });
+  } else {
+    postModel.update({
+        content: content
+      }, {
+        where: {
+          id: postId
+        }
+      })
+      .then(() => {
+        res.status(201).json({
+          message: 'Post modifié !',
+        });
+      })
+      .catch(error => {
+        res.status(500).json({
+          message: "Erreur lors de la modification du post",
+          error: error
+        });
+      });
+  }
+}

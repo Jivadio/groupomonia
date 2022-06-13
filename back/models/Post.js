@@ -20,7 +20,7 @@ const Post = mysql.define('post', {
         allowNull: true
     },
     createBy: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
     },
     createdAt: {

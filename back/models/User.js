@@ -27,11 +27,16 @@ const User = mysql.define('user', {
   },
   createdAt: {
     type: DataTypes.DATE,
-    defaultValue: mysql.literal('CURRENT_TIMESTAMP')
+    defaultValue: mysql.literal('CURRENT_TIMESTAMP') 
   },
   updatedAt: {
     type: DataTypes.DATE,
     defaultValue: mysql.literal('CURRENT_TIMESTAMP')
+  },
+  isAdmin: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   }
 });
 

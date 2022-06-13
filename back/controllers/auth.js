@@ -73,6 +73,7 @@ exports.getUser = (req, res, next) => {
   res.status(200).json({
     user: {
       id: loadedUser._id,
+      isAdmin: loadedUser.isAdmin,
       email: loadedUser.email,
       pseudo: loadedUser.pseudo,
     },
