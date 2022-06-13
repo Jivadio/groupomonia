@@ -6,6 +6,7 @@ const {
 const fs = require('fs');
 const base64Img = require('base64-img');
 const jwt = require('jsonwebtoken');
+const fileSystem = require('fs');
 
 exports.getAllPost = (req, res, next) => {
   postModel.findAll({
@@ -190,27 +191,48 @@ exports.getLike = (req, res, next) => {
 
 exports.deletePost = (req, res, next) => {
   const postId = req.body.postId;
-  postModel.destroy({
+  const imgLink = '';
+
+  postModel.findOne({
       where: {
         id: postId
       }
     })
-    .then(() => {
-      commentModel.destroy({
+    .then(post => {
+      imgLink = post.image.split('/images/')[1];
+      postModel.destroy({
           where: {
-            postId: postId
+            id: postId
           }
         })
         .then(() => {
-          likeModel.destroy({
+          commentModel.destroy({
               where: {
                 postId: postId
               }
             })
             .then(() => {
-              res.status(201).json({
-                message: 'Post supprimé !',
-              });
+              likeModel.destroy({
+                  where: {
+                    postId: postId
+                  }
+                })
+                .then(() => {
+                  res.status(201).json({
+                    message: 'Post supprimé !',
+                  });
+                  fileSystem.unlink('./images/' + imgLink, (err) => {
+                    if (err) {
+                      console.log(err);
+                    }
+                  });
+                })
+                .catch(error => {
+                  res.status(500).json({
+                    message: "Erreur lors de la suppression du post",
+                    error: error
+                  });
+                });
             })
             .catch(error => {
               res.status(500).json({
