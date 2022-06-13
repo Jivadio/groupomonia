@@ -266,30 +266,46 @@ exports.editPost = (req, res, next) => {
   const image = req.body.image;
 
   if (image) {
-    const pathArr = image.split('/');
-    const fileName = pathArr[pathArr.length - 1];
-    const url = 'http://localhost:3001/images/' + fileName;
+    base64Img.img(image, './images/', Date.now(), function (err, filepath) {
+      const pathArr = filepath.split('/');
+      const fileName = pathArr[pathArr.length - 1];
+      const url = 'http://localhost:3001/images/' + fileName;
 
-    postModel.update({
-        content: content,
-        image: url
-      }, {
-        where: {
-          id: postId
-        }
-      })
-      .then(() => {
-        res.status(201).json({
-          message: 'Post modifié !',
-          url: url
+      postModel.findOne({
+          where: {
+            id: postId
+          }
+        })
+        .then(post => {
+          if (post.image) {
+            fileSystem.unlink('./images/' + post.image.split('/images/')[1], (err) => {
+              if (err) {
+                console.log(err);
+              }
+            });
+          }
+          postModel.update({
+              content: content,
+              image: url
+            }, {
+              where: {
+                id: postId
+              }
+            })
+            .then(() => {
+              res.status(201).json({
+                message: 'Post modifié !',
+                url: url
+              });
+            })
+            .catch(error => {
+              res.status(500).json({
+                message: "Erreur lors de la modification du post",
+                error: error
+              });
+            });
         });
-      })
-      .catch(error => {
-        res.status(500).json({
-          message: "Erreur lors de la modification du post",
-          error: error
-        });
-      });
+    });
   } else {
     postModel.update({
         content: content

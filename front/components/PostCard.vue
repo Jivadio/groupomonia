@@ -113,6 +113,11 @@
                     <form method="post" @submit.prevent="sendEditModal" class="text-center mb-3">
                         <textarea class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none" rows="2"
                             v-model="textEdit" required></textarea>
+                        <label class="block">
+                            <span class="sr-only">Editer l'image</span>
+                            <input v-on:change="handleImage" type="file" ref="file"
+                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                        </label>
                         <button
                             class="inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Envoyer
@@ -191,6 +196,7 @@ export default {
             showEdit: false,
             editModal: false,
             textEdit: this.post.content,
+            image: null,
         }
     },
     components: {
@@ -311,6 +317,7 @@ export default {
                 await this.$axios.post('post/edit', {
                     postId: this.post.id,
                     content: this.textEdit,
+                    image: this.image,
                 });
 
                 this.showEdit = false;
@@ -318,6 +325,19 @@ export default {
             } catch (e) {
                 console.log(e)
             }
+        },
+
+        async handleImage(e) {
+            const selectedImage = e.target.files[0];
+            this.createBase64Image(selectedImage);
+        },
+
+        async createBase64Image(selectedImage) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.image = reader.result;
+            };
+            reader.readAsDataURL(selectedImage);
         },
 
     },
