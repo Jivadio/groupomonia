@@ -147,7 +147,6 @@
 .width-30 {
     width: 30%;
 }
-
 .react_icon {
     margin: 10px auto 0px auto;
     width: 10%;
@@ -223,6 +222,7 @@ export default {
 
         async showModalEdit() {
             this.editModal = true;
+            this.showEdit = false;
         },
 
         async openEdit() {
@@ -306,7 +306,6 @@ export default {
                         this.alreadyLike = true;
                     }
                 });
-
             } catch (e) {
                 console.log(e)
             }
@@ -320,6 +319,7 @@ export default {
                     image: this.image,
                 });
 
+                this.editModal = false;
                 this.showEdit = false;
                 $nuxt.$emit('deletingPost');
             } catch (e) {
@@ -340,6 +340,9 @@ export default {
             reader.readAsDataURL(selectedImage);
         },
 
+    },
+    created() {
+        this.$nuxt.$on('deletingComment', ($event) => this.fetchComment());
     },
     name: 'PostCard',
     props: ['post']

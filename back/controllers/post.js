@@ -327,3 +327,23 @@ exports.editPost = (req, res, next) => {
       });
   }
 }
+
+exports.deleteComment = (req, res, next) => {
+  const commentId = req.body.commentId;
+  commentModel.destroy({
+      where: {
+        id: commentId
+      }
+    })
+    .then(() => {
+      res.status(201).json({
+        message: 'Commentaire supprimé !',
+      });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Erreur lors de la suppression du commentaire",
+        error: error
+      });
+    });
+};

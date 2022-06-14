@@ -16,7 +16,7 @@ const Comment = mysql.define('comment', {
     allowNull: false
   },
   createBy: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false
   },
   postId: {
