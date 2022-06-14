@@ -13,6 +13,7 @@ router.post('/like', auth ,postController.getLike);
 router.post('/delete', auth ,postController.deletePost);
 router.post('/edit', auth ,postController.editPost);
 router.post('/deletecomment', auth ,postController.deleteComment);
+router.post('/editcomment', auth ,postController.editComment);
 
 
 module.exports = router;

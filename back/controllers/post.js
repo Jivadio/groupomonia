@@ -347,3 +347,27 @@ exports.deleteComment = (req, res, next) => {
       });
     });
 };
+
+exports.editComment = (req, res, next) => {
+  const commentId = req.body.commentId;
+  const content = req.body.content;
+
+  commentModel.update({
+      content: content
+    }, {
+      where: {
+        id: commentId
+      }
+    })
+    .then(() => {
+      res.status(201).json({
+        message: 'Commentaire modifié !',
+      });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Erreur lors de la modification du commentaire",
+        error: error
+      });
+    });
+}
