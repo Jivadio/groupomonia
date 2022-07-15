@@ -18,6 +18,12 @@
                 </div>
                 <div :number_like="number_like" class="icon_like cursor-pointer" v-on:click="deleteLike" v-else>
                 </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" viewBox="0 0 512 512" v-on:click="reportPost"
+                    class="cursor-pointer">
+                    <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                    <path
+                        d="M64 496C64 504.8 56.75 512 48 512h-32C7.25 512 0 504.8 0 496V32c0-17.75 14.25-32 32-32s32 14.25 32 32V496zM476.3 0c-6.365 0-13.01 1.35-19.34 4.233c-45.69 20.86-79.56 27.94-107.8 27.94c-59.96 0-94.81-31.86-163.9-31.87C160.9 .3055 131.6 4.867 96 15.75v350.5c32-9.984 59.87-14.1 84.85-14.1c73.63 0 124.9 31.78 198.6 31.78c31.91 0 68.02-5.971 111.1-23.09C504.1 355.9 512 344.4 512 332.1V30.73C512 11.1 495.3 0 476.3 0z" />
+                </svg>
                 <div class="cursor-pointer"
                     v-if="loggedInUser.user.isAdmin == true || post.createBy == loggedInUser.user.pseudo"
                     v-on:click="openEdit">
@@ -49,6 +55,15 @@
 
                                         <div class="">
                                             <p class="font-semibold">Editer</p>
+                                        </div>
+                                    </a>
+
+                                    <a v-if="reported"
+                                        class="flex flex-row items-start rounded-lg bg-transparent p-2 hover:bg-gray-200 "
+                                        v-on:click="allowPost">
+
+                                        <div class="">
+                                            <p class="font-semibold">Autoriser</p>
                                         </div>
                                     </a>
                                 </div>
@@ -147,6 +162,7 @@
 .width-30 {
     width: 30%;
 }
+
 .react_icon {
     margin: 10px auto 0px auto;
     width: 10%;
@@ -196,6 +212,7 @@ export default {
             editModal: false,
             textEdit: this.post.content,
             image: null,
+            reported: this.reported,
         }
     },
     components: {
@@ -332,6 +349,22 @@ export default {
             this.createBase64Image(selectedImage);
         },
 
+        async reportPost() {
+            const response = await this.$axios.post('post/report', {
+                postId: this.post.id,
+            });
+
+            $nuxt.$emit('deletingPost');
+        },
+
+        async allowPost() {
+            const response = await this.$axios.post('post/allow', {
+                postId: this.post.id,
+            });
+
+            $nuxt.$emit('allowPost');
+        },
+
         async createBase64Image(selectedImage) {
             const reader = new FileReader();
             reader.onload = () => {
@@ -345,6 +378,6 @@ export default {
         this.$nuxt.$on('deletingComment', ($event) => this.fetchComment());
     },
     name: 'PostCard',
-    props: ['post']
+    props: ['post', 'reported']
 }
 </script>

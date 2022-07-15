@@ -29,6 +29,7 @@
             </div>
         </div>
         <PostCard v-for="posts in post" :post="posts" />
+        <Chat />
     </div>
 </template>
 
@@ -37,6 +38,7 @@
 import { mapGetters } from 'vuex'
 import Navbar from '../components/Navbar.vue'
 import PostCard from '../components/PostCard.vue'
+import Chat from '../components/Chat.vue'
 
 export default {
     middleware: "auth",
@@ -97,6 +99,7 @@ export default {
     components: {
         Navbar,
         PostCard,
+        Chat,
     }
 }
 </script>

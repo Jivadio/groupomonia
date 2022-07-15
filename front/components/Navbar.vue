@@ -21,10 +21,13 @@
             <div class="hidden md:block">
                 <ul class="flex space-x-8 text-sm font-sans">
                     <li>
-                        <NuxtLink to="/" class="border-b-2 border-blue-500 pb-1">Acceuil</NuxtLink>
+                        <NuxtLink to="/" class="border-b-2 pb-1">Accueil</NuxtLink>
+                    </li>
+                    <li v-if="loggedInUser.user.isAdmin == true">
+                        <NuxtLink to="admin" class="border-b-2 pb-1">Administration</NuxtLink>
                     </li>
                     <li>
-                        <NuxtLink to="/" href="#"
+                        <NuxtLink to="profile" href="#"
                             class="cta bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded text-white font-semibold">{{
                                     loggedInUser.user.pseudo
                             }}</NuxtLink>
@@ -113,3 +116,9 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+a.nuxt-link-exact-active {
+    border-color: rgb(59 130 246);
+}
+</style>

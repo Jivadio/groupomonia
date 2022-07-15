@@ -14,6 +14,9 @@ exports.getAllPost = (req, res, next) => {
       order: [
         ['id', 'DESC'],
       ],
+      where: {
+        reported: 0
+      },
     })
     .then(posts => {
       res.status(200).json(posts);
@@ -367,6 +370,83 @@ exports.editComment = (req, res, next) => {
     .catch(error => {
       res.status(500).json({
         message: "Erreur lors de la modification du commentaire",
+        error: error
+      });
+    });
+}
+
+exports.reportPost = (req, res, next) => {
+  const postId = req.body.postId;
+
+  postModel.findOne({
+      where: {
+        id: postId
+      }
+    })
+    .then(post => {
+      postModel.update({
+          reported: post.reported + 1
+        }, {
+          where: {
+            id: postId
+          }
+        })
+        .then(() => {
+          res.status(201).json({
+            message: 'Post signalé !',
+          });
+        })
+        .catch(error => {
+          res.status(500).json({
+            message: "Erreur lors de la signalation du post",
+            error: error
+          });
+        });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Erreur lors de la signalation du post",
+        error: error
+      });
+    });
+}
+
+exports.getReportedPost = (req, res, next) => {
+  postModel.findAll({
+      include: [commentModel, likeModel],
+      order: [
+        ['id', 'DESC'],
+      ],
+      where: {
+        reported: 1
+      },
+    })
+    .then(posts => {
+      res.status(200).json(posts);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+}
+
+exports.allowPost = (req, res, next) => {
+  const postId = req.body.postId;
+
+  postModel.update({
+      reported: 0
+    }, {
+      where: {
+        id: postId
+      }
+    })
+    .then(() => {
+      res.status(201).json({
+        message: 'Post autorisé !',
+      });
+    })
+    .catch(error => {
+      res.status(500).json({
+        message: "Erreur lors de l'autorisation du post",
         error: error
       });
     });
